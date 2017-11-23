@@ -1,0 +1,12 @@
+[package]
+name = "meetup_client"
+version = "0.1.0"
+authors = ["Journeyman <antisocial@storiepvtride.it>"]
+
+[dependencies]
+log = "0.3.8"
+env_logger = "0.4.3"
+reqwest = "0.7.3"
+serde = "1.0.15"
+serde_json = "*"
+serde_derive = "*"
