@@ -22,9 +22,10 @@ fn main() {
 
     let meetup_url = env::var("MEETUP_URL").expect("MEETUP_URL was not found.");
     let member_id = env::var("MEMBER_ID").expect("MEMBER_ID was not found.");
-    let token = env::var("API_KEY").expect("API_KEY was not found.");
-    let client = MeetupClient::new(meetup_url, token);
+    let token = env::var("MEETUP_API_KEY").expect("MEETUP_API_KEY was not found.");
+    let client = MeetupClient::new(meetup_url.as_str(), token.as_str());
     // https://www.meetup.com/meetup_api/docs/activity/
-    let resp_data = client.get_activity(member_id);
+    let resp_data = client.get_activity(member_id.as_str());
     println!("{:?}", resp_data);
+    // println!("{:?}", client.url);
 }

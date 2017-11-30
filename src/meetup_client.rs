@@ -33,40 +33,35 @@ pub struct MeetupActivityResponseSerializer {
 }
 
 pub struct MeetupClient {
-    url: String,
-    token: String,
+    url: Url,
 }
 
 impl MeetupClient {
-    pub fn new(url: String, token: String) -> MeetupClient {
-        MeetupClient {
-            url: url,
-            token: token,
-        }
+    pub fn new(base_url: &str, token: &str) -> MeetupClient {
+        let mut url = Url::parse(base_url).unwrap();
+        url.query_pairs_mut().append_pair("key", token);
+        MeetupClient { url }
     }
 
-    pub fn get_activity(&self, member_id: String) -> MeetupActivityResponseSerializer {
-        let mut resp = self._make_request(Method::Get,
-                                          format!("{}/activity?key={}&member_id={}",
-                                                  self.url,
-                                                  self.token,
-                                                  member_id));
+    pub fn get_activity(&self, member_id: &str) -> MeetupActivityResponseSerializer {
+        let mut _url = self.url.clone();
+        _url.query_pairs_mut().append_pair("member_id", member_id);
+        _url.set_path("activity");
+        let mut resp = self._make_request(Method::Get, _url);
         // debug serialize and print (need to cast)
         //println!("{:?}", resp);
         //let resp_data: MeetupActivityResponseSerializer = resp.json().unwrap();
         //println!("{:?}", resp_data);
         resp.json().unwrap()
-
     }
 
-    fn _make_request(&self, method: Method, url: String) -> Response {
+    fn _make_request(&self, method: Method, url: Url) -> Response {
         let client = Client::new().unwrap();
-        let mut _url = Url::parse(&url).unwrap();
-        let resp = client.request(method, _url).unwrap().send().unwrap();
+        let resp = client.request(method, url).unwrap().send().unwrap();
         // debug serialize and print (need to cast)
         // let resp_data: MeetupActivityResponseSerializer = resp.json().unwrap();
         // println!("{:?}", resp_data);
-        //resp.json().unwrap()
+        // resp.json().unwrap();
         resp
     }
 
