@@ -1,17 +1,16 @@
-use reqwest::{Client, Method, Url, Response};
-extern crate serde_json;
+use reqwest::{Client, Method, Response, Url};
 extern crate serde;
+extern crate serde_json;
 
 // ref. https://github.com/rust-on-slack/rust-slack-inviter/blob/master/src/slack.rs
 
-#[derive(Debug)]
-#[derive(Deserialize)]
+#[derive(Debug, Deserialize)]
 struct MeetupResult {
     id: String,
     member_id: String,
     message_id: Option<String>,
     is_reply: Option<String>, // "False",
-    updated: Option<String>, // "Sun Nov 19 17:19:59 EST 2017"
+    updated: Option<String>,  // "Sun Nov 19 17:19:59 EST 2017"
     discussion_body: Option<String>,
     discussion_title: Option<String>,
     photo_url: Option<String>, // "https://secure.meetupstatic.com/photos/member/c/8/7/3/thumb_271311315.jpeg",
@@ -25,8 +24,7 @@ struct MeetupResult {
     group_id: Option<String>,
 }
 
-#[derive(Debug)]
-#[derive(Deserialize)]
+#[derive(Debug, Deserialize)]
 pub struct MeetupActivityResponseSerializer {
     results: Vec<MeetupResult>,
 }
@@ -57,10 +55,6 @@ impl MeetupClient {
     fn _make_request(&self, method: Method, url: Url) -> Response {
         let client = Client::new().unwrap();
         let resp = client.request(method, url).unwrap().send().unwrap();
-        // debug serialize and print (need to cast)
-        // let resp_data: MeetupActivityResponseSerializer = resp.json().unwrap();
-        // println!("{:?}", resp_data);
-        // resp.json().unwrap();
         resp
     }
 
