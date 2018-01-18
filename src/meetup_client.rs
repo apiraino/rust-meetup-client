@@ -1,4 +1,3 @@
-use std::io::Read;
 use reqwest::{Client, Method, Url, Response};
 extern crate serde_json;
 extern crate serde;
