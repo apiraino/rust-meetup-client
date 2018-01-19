@@ -64,3 +64,32 @@ impl MeetupClient {
     //     res.read_to_string(body).unwrap();
     // }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use MEETUP_URL;
+    static TOKEN: &str = "YOUR_MEETUP_TOKEN";
+
+    // setup() and teardown() are arbitrary names
+    fn setup() -> MeetupClient {
+        MeetupClient::new(MEETUP_URL, TOKEN)
+    }
+    fn teardown() {
+        // undo what you've done in setup()
+    }
+
+    #[test]
+    fn test_client() {
+        let client = setup();
+        let member_id = "YOUR_MEMBER_ID";
+        let url = Url::parse(&format!(
+            "{}/activity?&key={}&member_id={}",
+            MEETUP_URL, TOKEN, member_id
+        )).unwrap();
+        let resp_data = client._make_request(Method::Get, url);
+        assert_eq!(200, resp_data.status().as_u16());
+        teardown();
+    }
+
+}
