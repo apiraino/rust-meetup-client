@@ -5,7 +5,7 @@ extern crate serde_json;
 // ref. https://github.com/rust-on-slack/rust-slack-inviter/blob/master/src/slack.rs
 
 #[derive(Debug, Deserialize)]
-struct MeetupResult {
+pub struct MeetupResult {
     id: String,
     member_id: String,
     message_id: Option<String>,
@@ -17,16 +17,16 @@ struct MeetupResult {
     group_name: Option<String>,
     item_type: Option<String>,
     link: Option<String>,
-    published: Option<String>, // "Sun Nov 19 17:19:59 EST 2017",
-    title: Option<String>,
-    member_name: Option<String>,
+    pub published: Option<String>, // "Sun Nov 19 17:19:59 EST 2017",
+    pub title: Option<String>,
+    pub member_name: Option<String>,
     thread_id: Option<String>,
     group_id: Option<String>,
 }
 
 #[derive(Debug, Deserialize)]
 pub struct MeetupActivityResponseSerializer {
-    results: Vec<MeetupResult>,
+    pub results: Vec<MeetupResult>,
 }
 
 pub struct MeetupClient {

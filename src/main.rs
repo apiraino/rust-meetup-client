@@ -49,5 +49,12 @@ fn get_activity() {
     let client = MeetupClient::new(MEETUP_URL, token.as_str());
     // https://www.meetup.com/meetup_api/docs/activity/
     let resp_data = client.get_activity(member_id.as_str());
-    println!("{:?}", resp_data);
+    for item in resp_data.results {
+        println!(
+            "[{}] {}: {}",
+            item.published.unwrap(),
+            item.member_name.unwrap(),
+            item.title.unwrap()
+        );
+    }
 }
