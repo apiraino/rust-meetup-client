@@ -2,20 +2,29 @@ extern crate env_logger;
 extern crate hyper;
 #[macro_use]
 extern crate log;
+#[macro_use]
+extern crate quick_error;
 extern crate reqwest;
 extern crate serde;
 #[macro_use]
 extern crate serde_derive;
 extern crate serde_json;
-
 mod meetup_client;
 mod meetup_server;
 
 use std::env;
 use meetup_client::MeetupClient;
 use meetup_server::MeetupServer;
-
 use hyper::server::Http;
+
+quick_error! {
+    #[derive(Debug)]
+    pub enum MyError {
+        ReqwestError(err: reqwest::Error){
+            description(err.description())
+        }
+    }
+}
 
 static MEETUP_URL: &str = "https://api.meetup.com";
 
@@ -48,7 +57,7 @@ fn get_activity() {
     let token = env::var("MEETUP_API_KEY").expect("MEETUP_API_KEY was not found.");
     let client = MeetupClient::new(MEETUP_URL, token.as_str());
     // https://www.meetup.com/meetup_api/docs/activity/
-    let resp_data = client.get_activity(member_id.as_str());
+    let resp_data = client.get_activity(member_id.as_str()).unwrap();
     for item in resp_data.results {
         println!(
             "[{}] {}: {}",

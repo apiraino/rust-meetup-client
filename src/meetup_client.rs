@@ -1,6 +1,8 @@
+use std::result::Result;
 use reqwest::{Client, Method, Response, Url};
 extern crate serde;
 extern crate serde_json;
+use MyError;
 
 // ref. https://github.com/rust-on-slack/rust-slack-inviter/blob/master/src/slack.rs
 
@@ -33,6 +35,10 @@ pub struct MeetupClient {
     url: Url,
 }
 
+// https://www.reddit.com/r/rust/comments/69i105/the_grass_is_always_greener_my_struggles_with_rust/dh71fzh/
+// https://www.reddit.com/r/rust/comments/69i105/the_grass_is_always_greener_my_struggles_with_rust/dh6ryh0/
+type ClientResult<T> = Result<T, MyError>;
+
 impl MeetupClient {
     pub fn new(base_url: &str, token: &str) -> MeetupClient {
         let mut url = Url::parse(base_url).unwrap();
@@ -40,16 +46,16 @@ impl MeetupClient {
         MeetupClient { url }
     }
 
-    pub fn get_activity(&self, member_id: &str) -> MeetupActivityResponseSerializer {
+    pub fn get_activity(&self, member_id: &str) -> ClientResult<MeetupActivityResponseSerializer> {
         let mut _url = self.url.clone();
         _url.query_pairs_mut().append_pair("member_id", member_id);
         _url.set_path("activity");
         let mut resp = self._make_request(Method::Get, _url);
         // debug serialize and print (need to cast)
-        //println!("{:?}", resp);
-        //let resp_data: MeetupActivityResponseSerializer = resp.json().unwrap();
-        //println!("{:?}", resp_data);
-        resp.json().unwrap()
+        // println!("{:?}", resp);
+        // let resp_data: MeetupActivityResponseSerializer = resp.json().unwrap();
+        // println!("{:?}", resp_data);
+        resp.json().map_err(MyError::ReqwestError)
     }
 
     fn _make_request(&self, method: Method, url: Url) -> Response {
